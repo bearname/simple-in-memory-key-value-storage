@@ -1,1 +1,1 @@
-java -jar build/libs/demo-0.0.1-SNAPSHOT.jar  --spring.config.location=file:node%1.properties
+java -Xms512M -Xmx1024M -jar build/libs/demo-0.0.1-SNAPSHOT.jar  --spring.config.location=file:node%1.properties

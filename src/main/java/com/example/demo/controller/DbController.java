@@ -64,12 +64,12 @@ public class DbController {
 
             return ResponseEntity
                     .ok()
-                    .body("success");
+                    .body("true");
         } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseEntity
                     .ok()
-                    .body("failed");
+                    .body("false");
         }
     }
 }
