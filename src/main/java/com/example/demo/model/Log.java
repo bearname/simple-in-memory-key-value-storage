@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Log {
-    private final String key ;
+    private final String key;
     private String value;
     private long updatedAt;
 

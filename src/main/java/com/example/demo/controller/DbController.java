@@ -2,15 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Log;
 import com.example.demo.model.Value;
-import com.example.demo.model.ValueDto;
-import com.example.demo.model.ValueDtoList;
 import com.example.demo.service.StoreService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -65,7 +59,7 @@ public class DbController {
         System.out.println(new Date() + "sync" + body);
         try {
             ObjectMapper mapper = new ObjectMapper();
-            List<Log> transactionLog = mapper.readValue(body, new TypeReference<List<Log>>() {
+            List<Log> transactionLog = mapper.readValue(body, new TypeReference<>() {
             });
             for (Log value : transactionLog) {
                 System.out.println(value.getKey() + " " + value.getValue() + value.getUpdatedAt());
