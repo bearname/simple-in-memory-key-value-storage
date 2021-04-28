@@ -12,7 +12,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,6 +28,7 @@ public class UpdateEventListener implements ApplicationListener<UpdateValueEvent
 
     private List<String> nodeList = new ArrayList<>();
     private final Map<String, ValueDto> transactionLog = new ConcurrentHashMap<>();
+    private final HttpClient httpClient  = HttpClient.newBuilder().build();
 
     @Override
     public void onApplicationEvent(UpdateValueEvent event) {
@@ -37,8 +37,7 @@ public class UpdateEventListener implements ApplicationListener<UpdateValueEvent
             this.nodeList = Arrays.asList(nodes);
         }
 
-        final Log log = event.getLog();
-        transactionLog.put(log.getKey(), new ValueDto(log.getValue(), log.getUpdatedAt()));
+        transactionLog.put(event.getKey(), new ValueDto(event.getDto().getValue(), event.getDto().getUpdateDate()));
     }
 
     @Scheduled(fixedRate = 5000)
@@ -56,19 +55,21 @@ public class UpdateEventListener implements ApplicationListener<UpdateValueEvent
             final long updateDate = entry.getValue().getUpdateDate();
             foo.add(new Log(key, value, updateDate));
         }
-        HttpClient httpClient = HttpClient.newBuilder().build();
         String json = new Gson().toJson(foo);
+
+        StringBuilder builder = new StringBuilder();
 
         for (String node : this.nodeList) {
             try {
                 final String url = "http://" + node + "/api/v1/synchronise";
-                System.out.println(new Date() + " Notify" + url);
+                final String x = new Date() + " Notify" + url;
+                builder.append(x).append("\n");
                 sendPost(httpClient, json, url);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
         }
-
+        System.out.println(builder.toString());
         lastSynchronisedAt = System.currentTimeMillis();
 
         this.transactionLog.clear();
@@ -79,13 +80,20 @@ public class UpdateEventListener implements ApplicationListener<UpdateValueEvent
     }
 
     private void sendPost(HttpClient httpClient, String json, String url) throws URISyntaxException {
-        HttpRequest request = HttpRequest.newBuilder(new URI(url))
+        final var request = HttpRequest.newBuilder(new URI(url))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
 
-        httpClient.sendAsync(request, ofString())
-                .thenApply(HttpResponse::body)
-                .thenAccept(System.out::println);
+        try {
+            final var response = httpClient.send(request, ofString());
+            System.out.println(response.body());
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+//                .thenAccept(System.out::println);
+//        final var response = httpClient.sendAsync(request, ofString());
+//        response.thenApply(HttpResponse::body)
+//                .thenAccept(System.out::println);
     }
 }

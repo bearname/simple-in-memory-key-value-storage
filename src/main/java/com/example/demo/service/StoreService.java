@@ -10,4 +10,6 @@ public interface StoreService {
     void set(String key, String value);
 
     void synchronise(List<Log> transactionLog);
+
+    void backup();
 }

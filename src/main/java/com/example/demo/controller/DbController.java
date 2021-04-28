@@ -12,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -56,18 +55,10 @@ public class DbController {
     @ResponseBody
     public ResponseEntity<String> synchronise(HttpEntity<String> httpEntity) {
         final String body = httpEntity.getBody();
-        System.out.println(new Date() + "sync" + body);
         try {
             ObjectMapper mapper = new ObjectMapper();
             List<Log> transactionLog = mapper.readValue(body, new TypeReference<>() {
             });
-            for (Log value : transactionLog) {
-                System.out.println(value.getKey() + " " + value.getValue() + value.getUpdatedAt());
-            }
-
-            for (Log log : transactionLog) {
-                System.out.println(log.getValue());
-            }
 
             storeService.synchronise(transactionLog);
 

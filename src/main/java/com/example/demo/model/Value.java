@@ -1,11 +1,21 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 @Data
-@AllArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 public class Value {
-    private final String key;
-    private final String value;
+    private String key = "";
+    private String value = "";
+
+    public Value() {
+    }
+
+    public Value(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
 }
